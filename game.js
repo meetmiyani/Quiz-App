@@ -1,11 +1,11 @@
 const question = document.getElementById('question');
-const choice = Array.from(document.getElementsByClassName('choice-text'));
+const choices = Array.from(document.getElementsByClassName('choice-text'));
 
 let currentQuestion = {}
 let acceptAnswer = true;
 let score = 0;
 let questionCounter = 0;
-let availableqQestions = [];
+let availableQestion = [];
 
 let questions = [
     {
@@ -45,14 +45,42 @@ const MAX_QUESTINS = 3;
 startGame = () => {
     questionCounter = 0;
     score = 0;
-    availableqQestions = [...questions];
-    console.log(availableqQestions);
+    availableQestion = [...questions];
+    console.log(availableQestion);
     getNewQuestion();
 };
 
 getNewQuestion = () => {
+
+    if (availableQestion.lenght == 0 || questionCounter >= MAX_QUESTINS) {
+        return window.location.assign("/end.html");
+    }
+
     questionCounter++;
-    Math.floor(Math.random() * availableqQestions.length);
-}
+    const questionIndex = Math.floor(Math.random() * availableQestion.length);
+    currentQuestion = availableQestion[questionIndex];
+    question.innerText = currentQuestion.question;
+
+    choices.forEach(choice => {
+        const number = choice.dataset['number'];
+        choice.innerText = currentQuestion['choice' + number]
+    })
+    availableQestion.splice(questionIndex, 1);
+
+    acceptingAnswer = true;
+};
+
+choices.forEach(choice => {
+    choice.addEventListener('click', e => {
+        console.log(e.target);
+        if (!acceptingAnswer) return;
+
+        acceptingAnswer = false;
+        const selectedChoice = e.target;
+        const selectedAnswer = selectedChoice.dataset("number");
+        console.log(selectedAnswer);
+        getNewQuestion();
+    });
+})
 
 startGame();
